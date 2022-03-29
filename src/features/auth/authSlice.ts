@@ -1,26 +1,26 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { authService } from "./authService"
-
 export interface AuthState {
     user: any
     isSignedIn: boolean
-    isError: boolean
+    status: 'success' | 'error' | ''
     isSuccess: boolean
     isLoading: boolean
+    isError: boolean
     message: string | unknown
 }
-
 
 const initialState: AuthState = {
     user: null,
     isSignedIn: false,
+    status: '',
     isError: false,
     isSuccess: false,
     isLoading: false,
     message: '',
 }
 
-export const checkIfUserCurrentlySignedIn = createAsyncThunk('auth/check', async (userOut, thunkAPI) => {
+export const checkIfUserCurrentlySignedIn = createAsyncThunk('auth/check', async (_, thunkAPI) => {
     try {
         return await authService.checkIfUserCurrentlySignedIn()
     } catch (error: any) {
@@ -32,6 +32,15 @@ export const checkIfUserCurrentlySignedIn = createAsyncThunk('auth/check', async
 export const signInWithDemoAccount = createAsyncThunk('auth/signInDemo', async (_, thunkAPI) => {
     try {
         return await authService.signInWithDemoAccount()
+    } catch (error: any) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+export const signInWithGoogle = createAsyncThunk('auth/signInGoogle', async (_, thunkAPI) => {
+    try {
+        return await authService.signInWithGoogle()
     } catch (error: any) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
@@ -52,22 +61,26 @@ export const authSlice = createSlice(
         name: 'auth',
         initialState,
         reducers: {
-            reset: (state) => {
+            authStateReset: (state) => {
                 state.isLoading = false
                 state.isError = false
                 state.isSuccess = false
                 state.message = ''
+                state.status = ''
             }
         },
         extraReducers: (builder) => {
             builder
+                // -------------------------------------------------------------------------
                 .addCase(checkIfUserCurrentlySignedIn.fulfilled, (state, action) => {
                     state.user = action.payload
+                    state.status = 'success'
                     state.isSignedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
                 .addCase(checkIfUserCurrentlySignedIn.rejected, (state, action) => {
+                    state.status = 'error'
                     state.isError = true
                     state.isLoading = false
                     state.message = action.payload
@@ -75,26 +88,50 @@ export const authSlice = createSlice(
                 .addCase(checkIfUserCurrentlySignedIn.pending, (state) => {
                     state.isLoading = true
                 })
+                // -------------------------------------------------------------------------
                 .addCase(signInWithDemoAccount.fulfilled, (state, action) => {
                     state.user = action.payload
+                    state.status = 'success'
                     state.isSignedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
-                .addCase(signInWithDemoAccount.rejected, (state) => {
+                .addCase(signInWithDemoAccount.rejected, (state, action) => {
+                    state.status = 'error'
+                    state.message = action.payload
                     state.isError = true
                     state.isLoading = false
                 })
                 .addCase(signInWithDemoAccount.pending, (state) => {
                     state.isLoading = true
                 })
+                // -------------------------------------------------------------------------
+                .addCase(signInWithGoogle.fulfilled, (state, action) => {
+                    state.user = action.payload
+                    state.status = 'success'
+                    state.isSignedIn = true
+                    state.isSuccess = true
+                    state.isLoading = false
+                })
+                .addCase(signInWithGoogle.rejected, (state, action) => {
+                    state.status = 'error'
+                    state.message = action.payload
+                    state.isError = true
+                    state.isLoading = false
+                })
+                .addCase(signInWithGoogle.pending, (state) => {
+                    state.isLoading = true
+                })
+                // -------------------------------------------------------------------------
                 .addCase(signOutAll.fulfilled, (state) => {
                     state.user = null
+                    state.status = 'success'
                     state.isSignedIn = false
                     state.isLoading = false
                     state.isSuccess = true
                 })
                 .addCase(signOutAll.rejected, (state) => {
+                    state.status = 'error'
                     state.isError = true
                     state.isLoading = false
                 })
@@ -105,6 +142,6 @@ export const authSlice = createSlice(
     }
 )
 
-export const { reset } = authSlice.actions
+export const { authStateReset } = authSlice.actions
 
 export default authSlice.reducer

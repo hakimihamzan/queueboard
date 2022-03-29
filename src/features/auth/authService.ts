@@ -1,7 +1,8 @@
-import { getAuth, signOut, signInWithEmailAndPassword, onAuthStateChanged, Auth } from "firebase/auth";
+import { getAuth, signOut, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../../firebase.config";
 
 const auth = getAuth(app)
+const provider = new GoogleAuthProvider()
 
 interface AppUser {
     displayName: string | null
@@ -19,7 +20,8 @@ const signInWithDemoAccount = () => {
     return new Promise((resolve, reject) => {
         signInWithEmailAndPassword(auth, demoEmail, demoPassword)
             .then((userCredential) => {
-                const user = userCredential.user;
+                const user = userCredential.user
+
                 const appUser: AppUser = {
                     displayName: user.displayName,
                     email: user.email,
@@ -28,6 +30,30 @@ const signInWithDemoAccount = () => {
                     phoneNumber: user.phoneNumber,
                     uid: user.uid,
                 }
+
+                resolve(appUser)
+            })
+            .catch((error) => {
+                reject(error)
+            });
+    })
+}
+
+const signInWithGoogle = () => {
+    return new Promise((resolve, reject) => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const user = result.user
+
+                const appUser: AppUser = {
+                    displayName: user.displayName,
+                    email: user.email,
+                    emailVerified: user.emailVerified,
+                    photoURL: user.photoURL,
+                    phoneNumber: user.phoneNumber,
+                    uid: user.uid,
+                }
+
                 resolve(appUser)
             })
             .catch((error) => {
@@ -51,6 +77,7 @@ const checkIfUserCurrentlySignedIn = () => {
     return new Promise((resolve, reject) => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
+
                 const appUser: AppUser = {
                     displayName: user.displayName,
                     email: user.email,
@@ -59,7 +86,9 @@ const checkIfUserCurrentlySignedIn = () => {
                     phoneNumber: user.phoneNumber,
                     uid: user.uid,
                 }
+
                 resolve(appUser)
+
             } else {
                 reject(new Error('User is not signed in'))
             }
@@ -70,5 +99,6 @@ const checkIfUserCurrentlySignedIn = () => {
 export const authService = {
     checkIfUserCurrentlySignedIn,
     signInWithDemoAccount,
-    signOutAll
+    signOutAll,
+    signInWithGoogle
 }
