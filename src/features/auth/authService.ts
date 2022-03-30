@@ -16,7 +16,7 @@ interface AppUser {
 const demoEmail = process.env.REACT_APP_DEMO_EMAIL ? process.env.REACT_APP_DEMO_EMAIL : ''
 const demoPassword = process.env.REACT_APP_DEMO_PASSWORD ? process.env.REACT_APP_DEMO_PASSWORD : ''
 
-const signInWithDemoAccount = () => {
+const logInWithDemoAccount = () => {
     return new Promise((resolve, reject) => {
         signInWithEmailAndPassword(auth, demoEmail, demoPassword)
             .then((userCredential) => {
@@ -39,7 +39,7 @@ const signInWithDemoAccount = () => {
     })
 }
 
-const signInWithGoogle = () => {
+const logInWithGoogle = () => {
     return new Promise((resolve, reject) => {
         signInWithPopup(auth, provider)
             .then((result) => {
@@ -62,7 +62,7 @@ const signInWithGoogle = () => {
     })
 }
 
-const signOutAll = () => {
+const logOutAll = () => {
     return new Promise((resolve, reject) => {
         try {
             signOut(auth)
@@ -73,7 +73,7 @@ const signOutAll = () => {
     })
 }
 
-const checkIfUserCurrentlySignedIn = () => {
+const checkIfUserCurrentlyLoggedIn = () => {
     return new Promise((resolve, reject) => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -97,8 +97,8 @@ const checkIfUserCurrentlySignedIn = () => {
 }
 
 export const authService = {
-    checkIfUserCurrentlySignedIn,
-    signInWithDemoAccount,
-    signOutAll,
-    signInWithGoogle
+    checkIfUserCurrentlyLoggedIn,
+    logInWithDemoAccount,
+    logOutAll,
+    logInWithGoogle
 }
