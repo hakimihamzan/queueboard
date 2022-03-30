@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { authService } from "./authService"
 export interface AuthState {
     user: any
-    isSignedIn: boolean
+    isLoggedIn: boolean
     status: 'success' | 'error' | ''
     isSuccess: boolean
     isLoading: boolean
@@ -12,7 +12,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
     user: null,
-    isSignedIn: false,
+    isLoggedIn: false,
     status: '',
     isError: false,
     isSuccess: false,
@@ -75,7 +75,7 @@ export const authSlice = createSlice(
                 .addCase(checkIfUserCurrentlySignedIn.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
@@ -92,7 +92,7 @@ export const authSlice = createSlice(
                 .addCase(signInWithDemoAccount.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
@@ -109,7 +109,7 @@ export const authSlice = createSlice(
                 .addCase(signInWithGoogle.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
@@ -126,7 +126,7 @@ export const authSlice = createSlice(
                 .addCase(signOutAll.fulfilled, (state) => {
                     state.user = null
                     state.status = 'success'
-                    state.isSignedIn = false
+                    state.isLoggedIn = false
                     state.isLoading = false
                     state.isSuccess = true
                 })
