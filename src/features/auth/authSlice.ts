@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { authService } from "./authService"
 export interface AuthState {
     user: any
-    isSignedIn: boolean
+    isLoggedIn: boolean
     status: 'success' | 'error' | ''
     isSuccess: boolean
     isLoading: boolean
@@ -12,7 +12,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
     user: null,
-    isSignedIn: false,
+    isLoggedIn: false,
     status: '',
     isError: false,
     isSuccess: false,
@@ -20,36 +20,36 @@ const initialState: AuthState = {
     message: '',
 }
 
-export const checkIfUserCurrentlySignedIn = createAsyncThunk('auth/check', async (_, thunkAPI) => {
+export const checkIfUserCurrentlyLoggedIn = createAsyncThunk('auth/check', async (_, thunkAPI) => {
     try {
-        return await authService.checkIfUserCurrentlySignedIn()
+        return await authService.checkIfUserCurrentlyLoggedIn()
     } catch (error: any) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
     }
 })
 
-export const signInWithDemoAccount = createAsyncThunk('auth/signInDemo', async (_, thunkAPI) => {
+export const logInWithDemoAccount = createAsyncThunk('auth/logInDemo', async (_, thunkAPI) => {
     try {
-        return await authService.signInWithDemoAccount()
+        return await authService.logInWithDemoAccount()
     } catch (error: any) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
     }
 })
 
-export const signInWithGoogle = createAsyncThunk('auth/signInGoogle', async (_, thunkAPI) => {
+export const logInWithGoogle = createAsyncThunk('auth/logInGoogle', async (_, thunkAPI) => {
     try {
-        return await authService.signInWithGoogle()
+        return await authService.logInWithGoogle()
     } catch (error: any) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
     }
 })
 
-export const signOutAll = createAsyncThunk('auth/signOut', async (_, thunkAPI) => {
+export const logOutAll = createAsyncThunk('auth/logOut', async (_, thunkAPI) => {
     try {
-        return await authService.signOutAll()
+        return await authService.logOutAll()
     } catch (error: any) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
@@ -72,70 +72,70 @@ export const authSlice = createSlice(
         extraReducers: (builder) => {
             builder
                 // -------------------------------------------------------------------------
-                .addCase(checkIfUserCurrentlySignedIn.fulfilled, (state, action) => {
+                .addCase(checkIfUserCurrentlyLoggedIn.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
-                .addCase(checkIfUserCurrentlySignedIn.rejected, (state, action) => {
+                .addCase(checkIfUserCurrentlyLoggedIn.rejected, (state, action) => {
                     state.status = 'error'
                     state.isError = true
                     state.isLoading = false
                     state.message = action.payload
                 })
-                .addCase(checkIfUserCurrentlySignedIn.pending, (state) => {
+                .addCase(checkIfUserCurrentlyLoggedIn.pending, (state) => {
                     state.isLoading = true
                 })
                 // -------------------------------------------------------------------------
-                .addCase(signInWithDemoAccount.fulfilled, (state, action) => {
+                .addCase(logInWithDemoAccount.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
-                .addCase(signInWithDemoAccount.rejected, (state, action) => {
+                .addCase(logInWithDemoAccount.rejected, (state, action) => {
                     state.status = 'error'
                     state.message = action.payload
                     state.isError = true
                     state.isLoading = false
                 })
-                .addCase(signInWithDemoAccount.pending, (state) => {
+                .addCase(logInWithDemoAccount.pending, (state) => {
                     state.isLoading = true
                 })
                 // -------------------------------------------------------------------------
-                .addCase(signInWithGoogle.fulfilled, (state, action) => {
+                .addCase(logInWithGoogle.fulfilled, (state, action) => {
                     state.user = action.payload
                     state.status = 'success'
-                    state.isSignedIn = true
+                    state.isLoggedIn = true
                     state.isSuccess = true
                     state.isLoading = false
                 })
-                .addCase(signInWithGoogle.rejected, (state, action) => {
+                .addCase(logInWithGoogle.rejected, (state, action) => {
                     state.status = 'error'
                     state.message = action.payload
                     state.isError = true
                     state.isLoading = false
                 })
-                .addCase(signInWithGoogle.pending, (state) => {
+                .addCase(logInWithGoogle.pending, (state) => {
                     state.isLoading = true
                 })
                 // -------------------------------------------------------------------------
-                .addCase(signOutAll.fulfilled, (state) => {
+                .addCase(logOutAll.fulfilled, (state) => {
                     state.user = null
                     state.status = 'success'
-                    state.isSignedIn = false
+                    state.isLoggedIn = false
                     state.isLoading = false
                     state.isSuccess = true
                 })
-                .addCase(signOutAll.rejected, (state) => {
+                .addCase(logOutAll.rejected, (state) => {
                     state.status = 'error'
                     state.isError = true
                     state.isLoading = false
                 })
-                .addCase(signOutAll.pending, (state) => {
+                .addCase(logOutAll.pending, (state) => {
                     state.isLoading = true
                 })
         }
