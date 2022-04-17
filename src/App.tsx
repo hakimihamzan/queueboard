@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { checkIfUserCurrentlyLoggedIn, authStateReset } from './features/auth/authSlice';
 import NavbarTemp from './components/NavbarTemp';
+import MarketingPage from './pages/Marketing';
 
 function App() {
   const dispatch = useAppDispatch()
@@ -16,17 +17,18 @@ function App() {
     if (isError || isSuccess) {
       dispatch(authStateReset())
     }
-  }, [dispatch, isError, isSuccess, authStateReset])
+  }, [dispatch, isError, isSuccess])
 
   useEffect(() => {
     dispatch(checkIfUserCurrentlyLoggedIn())
-  }, [dispatch, checkIfUserCurrentlyLoggedIn, authStateReset])
+  }, [dispatch])
 
   return (
     <>
       <Router>
         <Routes>
           <Route path='/' element={<HomePage />} />
+          <Route path='/marketing' element={<MarketingPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/project' element={<PrivateRoute />}>
             <Route path='/project' element={<ProjectPage />} />

@@ -3,23 +3,25 @@ import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import Spinner from "../components/Spinner"
 import { checkIfUserCurrentlyLoggedIn, logInWithDemoAccount, logInWithGoogle } from "../features/auth/authSlice"
+import { useAuthStatus } from "../hooks/useAuthStatus"
 
 function LoginPage() {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const { isLoading, isSuccess, isError, message } = useAppSelector(state => state.auth)
+    const { loggedIn } = useAuthStatus()
 
     const { user } = useAppSelector(state => state.auth)
     console.log(user)
 
     useEffect(() => {
-        if (isSuccess) {
+        if (loggedIn) {
             navigate('/project')
         }
         if (isError) {
             console.log(message)
         }
-    }, [isSuccess, isError, message, navigate])
+    }, [isSuccess, isError, message, navigate, loggedIn])
 
     const onClickGoogle = () => {
         dispatch(logInWithGoogle())

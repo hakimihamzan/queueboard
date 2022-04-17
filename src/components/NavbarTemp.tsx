@@ -9,10 +9,6 @@ function NavbarTemp() {
 
     const onLogout = () => {
         dispatch(logOutAll())
-
-        setTimeout(() => {
-            dispatch(authStateReset())
-        }, 2000);
     }
     return (
         <nav className='absolute bottom-0 w-full'>
@@ -21,11 +17,13 @@ function NavbarTemp() {
                     <Link to='/'>Home</Link>
                 </li>
                 <li>
-                    <Link to='/login'>Login</Link>
-                </li>
-                <li>
                     <Link to='/project'>Project</Link>
                 </li>
+                {!isLoggedIn && (
+                    <li>
+                        <Link to='/login'>Login</Link>
+                    </li>
+                )}
                 {isLoggedIn && (
                     <li>
                         <button onClick={onLogout}>Logout</button>
